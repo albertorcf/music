@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import { Header } from "./components/Header";
+import { Banner } from "./components/Banner";
+import { PlaylistCard } from "./components/PlaylistCard";
+import { Footer } from "./components/Footer";
 
-function App() {
-  const [count, setCount] = useState(0)
+// ...mock playlists array
+
+export default function App() {
+  const [searchedArtist, setSearchedArtist] = useState<string | null>(null);
+
+  function handleArtistSearch(artist: string) {
+    console.log(artist);
+    setSearchedArtist(artist);
+    // Aqui você vai chamar a função que consulta a API do Spotify futuramente!
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
+      <Header />
+      <Banner userName="visitante" onSearch={handleArtistSearch} />
+      {/* O resto da sua home */}
+      <main>
+        {/* ...Playlists ou outra seção */}
+      </main>
+      <Footer />
+    </div>
+  );
 }
-
-export default App
