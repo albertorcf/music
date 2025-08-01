@@ -1,27 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Header } from "./components/Header";
 import { Banner } from "./components/Banner";
-import { PlaylistCard } from "./components/PlaylistCard";
 import { Footer } from "./components/Footer";
 import { fetchSpotifyArtist, fetchSpotifyAlbums } from "./utils/fetchSpotifyArtist";
 import { fetchWikipediaBio } from "./utils/fetchWikipediaBio";
+import { getSpotifyToken } from "./utils/getSpotifyToken";
 
-// Token válido por 1h (gere um novo depois se expirar!)
-const SPOTIFY_TOKEN = "BQC8mAnIdQCr4gpJ2KruBg-dC-VMOZE9tR4Ovu5SuMrVV8-3W7Q1mrtuq9MdQ-uwSau0fkCcIKFsJRXxa8QGUc_fz1su07bhxrk3cb2zNLZbjL6WavQ83aCTUJjHKM4OIOFU9h44No0";
-
-// Playlists mockadas
-const playlists = [
-  {
-    title: "Hits do Momento",
-    image: "https://i.scdn.co/image/ab67706f000000029bb920f1adfae9f6a8b1b6f1",
-    link: "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M",
-  },
-  {
-    title: "Indie Brasil",
-    image: "https://i.scdn.co/image/ab67706f0000000295ec0eb2e6e1341e6ef43b6a",
-    link: "https://open.spotify.com/playlist/37i9dQZF1DXb57FjYWz00c",
-  },
-];
+//const SPOTIFY_TOKEN = await getSpotifyToken();
 
 export default function App() {
   const [searchedArtist, setSearchedArtist] = useState<any>(null);
@@ -38,6 +23,8 @@ export default function App() {
     setBio(null);
 
     try {
+      const SPOTIFY_TOKEN = await getSpotifyToken();
+
       const artistData = await fetchSpotifyArtist(artist, SPOTIFY_TOKEN);
       if (!artistData) {
         setError("Artista não encontrado.");
@@ -52,6 +39,7 @@ export default function App() {
       // Busca a biografia (Wiki)
       const wikiBio = await fetchWikipediaBio(artistData.name);
       setBio(wikiBio);
+    
     } catch (err: any) {
       setError("Erro ao buscar dados no Spotify/Wikipedia.");
     } finally {
