@@ -50,13 +50,16 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
       <Header />
-      
+
       <Banner userName="visitante" onSearch={handleArtistSearch} />
       <main style={{ maxWidth: 900, margin: "0 auto" }}>
         {loading && <p>Carregando...</p>}
         {error && <p style={{ color: "#ff7272" }}>{error}</p>}
+
         {searchedArtist && (
-          <section style={{ maxWidth: 900, margin: "0 auto", marginTop: 16 }}>
+          <section style={{ 
+            maxWidth: 900, margin: "0 auto", marginTop: 16 
+          }}>
             <h3>
               {searchedArtist.name}
               {searchedArtist.external_urls?.spotify && (
@@ -70,6 +73,7 @@ export default function App() {
                 </a>
               )}
             </h3>
+
             <div style={{ display: "flex", alignItems: "flex-start", gap: 36 }}>
               {searchedArtist.images?.[0]?.url && (
                 <img
@@ -78,6 +82,7 @@ export default function App() {
                   style={{ width: 180, borderRadius: 12 }}
                 />
               )}
+
               <div>
                 <h4 style={{ marginTop: 0 }}>Álbuns recentes:</h4>
                 <ul style={{ paddingLeft: 20 }}>
@@ -106,6 +111,7 @@ export default function App() {
                   ))}
                 </ul>
               </div>
+
               {bio && (
                 <div
                   style={{
@@ -126,6 +132,7 @@ export default function App() {
           </section>
         )}
       </main>
+
       <Footer />
     </div>
   );
