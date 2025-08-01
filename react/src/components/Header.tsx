@@ -1,4 +1,5 @@
 import React from "react";
+import { SpotifyLoginButton } from "../components/SpotifyLoginButton";
 
 export const Header: React.FC = () => (
   <header
@@ -28,5 +29,7 @@ export const Header: React.FC = () => (
         Meu Perfil
       </a>
     </nav>
+
+    <SpotifyLoginButton />
   </header>
 );
