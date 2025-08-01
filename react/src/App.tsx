@@ -6,13 +6,18 @@ import { fetchSpotifyArtist, fetchSpotifyAlbums } from "./utils/fetchSpotifyArti
 import { fetchWikipediaBio } from "./utils/fetchWikipediaBio";
 import { getSpotifyToken } from "./utils/getSpotifyToken";
 
+/**
+ * Componente principal do app
+ */
 export default function App() {
+  // --- Estados do app ---
   const [searchedArtist, setSearchedArtist] = useState<any>(null);
   const [albums, setAlbums] = useState<any[]>([]);
   const [bio, setBio] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // --- Handler: busca artista, álbuns e bio ---
   async function handleArtistSearch(artist: string) {
     setError(null);
     setLoading(true);
@@ -21,8 +26,10 @@ export default function App() {
     setBio(null);
 
     try {
+      // Obtém token do backend
       const SPOTIFY_TOKEN = await getSpotifyToken();
 
+      // Busca artista na API Spotify
       const artistData = await fetchSpotifyArtist(artist, SPOTIFY_TOKEN);
       if (!artistData) {
         setError("Artista não encontrado.");
@@ -31,10 +38,11 @@ export default function App() {
       }
       setSearchedArtist(artistData);
 
+      // Busca álbuns recentes
       const albumsData = await fetchSpotifyAlbums(artistData.id, SPOTIFY_TOKEN);
       setAlbums(albumsData.slice(0, 3)); // mostra até 3 álbuns
 
-      // Busca a biografia (Wiki)
+      // Busca biografia (Wikipedia)
       const wikiBio = await fetchWikipediaBio(artistData.name);
       setBio(wikiBio);
     } catch (err: any) {
@@ -44,6 +52,7 @@ export default function App() {
     }
   }
 
+  // --- Renderização ---
   return (
     <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
       <Header />
@@ -51,9 +60,11 @@ export default function App() {
       <Banner userName="visitante" onSearch={handleArtistSearch} />
 
       <main style={{ maxWidth: 900, margin: "0 auto" }}>
+        {/* --- Mensagens de carregamento e erro --- */}
         {loading && <p>Carregando...</p>}
         {error && <p style={{ color: "#ff7272" }}>{error}</p>}
 
+        {/* --- Resultado da busca --- */}
         {searchedArtist && (
           <section
             style={{
@@ -69,6 +80,7 @@ export default function App() {
               gap: "1.5rem",
             }}
           >
+            {/* --- Info artista e álbuns recentes --- */}
             <div
               style={{
                 display: "flex",
@@ -79,6 +91,7 @@ export default function App() {
               }}
             >
               {/* Imagem do artista */}
+              {/*
               {searchedArtist.images?.[0]?.url && (
                 <img
                   src={searchedArtist.images[0].url}
@@ -94,6 +107,7 @@ export default function App() {
                   }}
                 />
               )}
+              */}
 
               {/* Álbuns recentes */}
               <div style={{ flex: 1, minWidth: 180 }}>
@@ -158,7 +172,8 @@ export default function App() {
                 </div>
               </div>
             </div>
-            {/* BIOGRAFIA ABAIXO */}
+
+            {/* --- Biografia: imagem à esquerda, texto ao redor (float) --- */}
             {bio && (
               <div
                 style={{
@@ -172,12 +187,35 @@ export default function App() {
                   color: "#fff",
                   textAlign: "left",
                   boxShadow: "0 2px 6px #0001",
+                  minHeight: 100,
                 }}
               >
                 <strong>Biografia</strong>
-                <p style={{ margin: "0.4em 0 0 0" }}>{bio}</p>
+                <div style={{ margin: "0.7em 0 0 0", minHeight: 70 }}>
+                  {/* Imagem pequena do artista à esquerda da bio */}
+                  {searchedArtist.images?.[1]?.url && (
+                    <img
+                      src={searchedArtist.images[1]?.url || searchedArtist.images[0]?.url}
+                      alt={searchedArtist.name}
+                      style={{
+                        float: "left",
+                        width: 80,
+                        height: 80,
+                        objectFit: "cover",
+                        marginRight: 16,
+                        marginBottom: 4,
+                        borderRadius: 8,
+                        boxShadow: "0 1px 4px #1118",
+                      }}
+                    />
+                  )}
+                  {/* Texto da biografia "abraçando" a imagem */}
+                  <span>{bio}</span>
+                </div>
+                <div style={{ clear: "both" }} />
               </div>
             )}
+
           </section>
         )}
       </main>
