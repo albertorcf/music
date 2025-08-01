@@ -1,3 +1,4 @@
+// react/src/components/Banner.tsx
 import React, { useState } from "react";
 
 type BannerProps = {
