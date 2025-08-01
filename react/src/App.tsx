@@ -50,6 +50,7 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
       <Header />
+      
       <Banner userName="visitante" onSearch={handleArtistSearch} />
       <main style={{ maxWidth: 900, margin: "0 auto" }}>
         {loading && <p>Carregando...</p>}

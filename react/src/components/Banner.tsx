@@ -28,9 +28,10 @@ export const Banner: React.FC<BannerProps> = ({ userName = "visitante", onSearch
       }}
       aria-label="Banner de boas-vindas"
     >
-      <h2 style={{ marginBottom: 8 }}>Olá, {userName}!</h2>
+      <h2 style={{ marginBottom: 8 }}>Olá! Bem-vindo ao Music Social!</h2>
+
       <p style={{ marginBottom: 16, fontSize: "1.1rem" }}>
-        Descubra mais sobre seu artista ou banda favorita:
+        Digite o nome do seu artista ou banda favorita:
       </p>
       <form
         onSubmit={handleSubmit}
