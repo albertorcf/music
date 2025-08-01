@@ -20,10 +20,10 @@ export const Banner: React.FC<BannerProps> = ({ userName = "visitante", onSearch
       style={{
         background: "linear-gradient(90deg, #1db954 30%, #191414 100%)",
         color: "#fff",
-        padding: "2.5rem 1rem 2rem 1rem",
+        padding: "2rem 1rem 2rem 1rem",
         borderRadius: 16,
         maxWidth: 600,
-        margin: "2rem auto 2rem auto",
+        margin: "1rem auto 1rem auto",
         boxShadow: "0 4px 24px #0004",
       }}
       aria-label="Banner de boas-vindas"

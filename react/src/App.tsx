@@ -6,8 +6,6 @@ import { fetchSpotifyArtist, fetchSpotifyAlbums } from "./utils/fetchSpotifyArti
 import { fetchWikipediaBio } from "./utils/fetchWikipediaBio";
 import { getSpotifyToken } from "./utils/getSpotifyToken";
 
-//const SPOTIFY_TOKEN = await getSpotifyToken();
-
 export default function App() {
   const [searchedArtist, setSearchedArtist] = useState<any>(null);
   const [albums, setAlbums] = useState<any[]>([]);
@@ -39,7 +37,6 @@ export default function App() {
       // Busca a biografia (Wiki)
       const wikiBio = await fetchWikipediaBio(artistData.name);
       setBio(wikiBio);
-    
     } catch (err: any) {
       setError("Erro ao buscar dados no Spotify/Wikipedia.");
     } finally {
@@ -52,87 +49,138 @@ export default function App() {
       <Header />
 
       <Banner userName="visitante" onSearch={handleArtistSearch} />
+
       <main style={{ maxWidth: 900, margin: "0 auto" }}>
         {loading && <p>Carregando...</p>}
         {error && <p style={{ color: "#ff7272" }}>{error}</p>}
 
         {searchedArtist && (
-          <section style={{ 
-            maxWidth: 900, margin: "0 auto", marginTop: 16 
-          }}>
-            <h3>
-              {searchedArtist.name}
-              {searchedArtist.external_urls?.spotify && (
-                <a
-                  href={searchedArtist.external_urls.spotify}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ marginLeft: 10, color: "#1db954", fontWeight: 600 }}
-                >
-                  Ver no Spotify
-                </a>
-              )}
-            </h3>
-
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 36 }}>
+          <section
+            style={{
+              background: "linear-gradient(90deg, #191414 0%, #222 100%)",
+              color: "#fff",
+              borderRadius: 16,
+              maxWidth: 600,
+              margin: "1.5rem auto",
+              boxShadow: "0 4px 24px #0004",
+              padding: "2rem 1.5rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.5rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 24,
+                alignItems: "flex-start",
+                flexWrap: "wrap",
+              }}
+            >
+              {/* Imagem do artista */}
               {searchedArtist.images?.[0]?.url && (
                 <img
                   src={searchedArtist.images[0].url}
                   alt={searchedArtist.name}
-                  style={{ width: 180, borderRadius: 12 }}
+                  style={{
+                    width: 120,
+                    minWidth: 100,
+                    maxWidth: "40vw",
+                    borderRadius: 12,
+                    objectFit: "cover",
+                    boxShadow: "0 2px 8px #19141480",
+                    marginBottom: 0,
+                  }}
                 />
               )}
 
-              <div>
-                <h4 style={{ marginTop: 0 }}>Álbuns recentes:</h4>
-                <ul style={{ paddingLeft: 20 }}>
+              {/* Álbuns recentes */}
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <h3 style={{ margin: "0 0 0.7em 0" }}>
+                  {searchedArtist.name}
+                  {searchedArtist.external_urls?.spotify && (
+                    <a
+                      href={searchedArtist.external_urls.spotify}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        marginLeft: 12,
+                        color: "#1db954",
+                        fontWeight: 600,
+                        fontSize: "0.97em",
+                      }}
+                    >
+                      Ver no Spotify
+                    </a>
+                  )}
+                </h3>
+                <h4 style={{ margin: "0 0 0.4em 0" }}>Álbuns recentes:</h4>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "1.1em",
+                  }}
+                >
                   {albums.map((album) => (
-                    <li key={album.id} style={{ marginBottom: 8 }}>
+                    <div
+                      key={album.id}
+                      style={{
+                        background: "#232323",
+                        borderRadius: 10,
+                        padding: 8,
+                        minWidth: 80,
+                        maxWidth: 110,
+                        textAlign: "center",
+                        boxShadow: "0 2px 6px #0002",
+                      }}
+                    >
                       <img
                         src={album.images[0]?.url}
                         alt={album.name}
                         style={{
-                          width: 60,
-                          height: 60,
+                          width: 70,
+                          height: 70,
+                          borderRadius: 6,
                           objectFit: "cover",
-                          borderRadius: 8,
-                          marginRight: 8,
-                          verticalAlign: "middle",
+                          marginBottom: 6,
                         }}
                       />
-                      <span style={{ verticalAlign: "middle" }}>
+                      <div style={{ fontSize: "0.97em", fontWeight: 500, marginBottom: 2 }}>
                         {album.name}
-                        {" "}
-                        <span style={{ color: "#bbb", fontSize: "0.95em" }}>
-                          ({album.release_date?.slice(0, 4) || "----"})
-                        </span>
-                      </span>
-                    </li>
+                      </div>
+                      <div style={{ color: "#bbb", fontSize: "0.92em" }}>
+                        {album.release_date?.slice(0, 4) || "----"}
+                      </div>
+                    </div>
                   ))}
-                </ul>
-              </div>
-
-              {bio && (
-                <div
-                  style={{
-                    marginLeft: 12,
-                    maxWidth: 260,
-                    background: "#222",
-                    borderRadius: 12,
-                    padding: "1rem",
-                    fontSize: "1rem",
-                    lineHeight: 1.4,
-                  }}
-                >
-                  <strong>Biografia</strong>
-                  <p style={{ margin: "0.5rem 0 0 0" }}>{bio}</p>
                 </div>
-              )}
+              </div>
             </div>
+            {/* BIOGRAFIA ABAIXO */}
+            {bio && (
+              <div
+                style={{
+                  marginTop: 6,
+                  width: "100%",
+                  background: "#181818cc",
+                  borderRadius: 10,
+                  padding: "1em 1em 0.8em 1em",
+                  fontSize: "1.04em",
+                  lineHeight: 1.45,
+                  color: "#fff",
+                  textAlign: "left",
+                  boxShadow: "0 2px 6px #0001",
+                }}
+              >
+                <strong>Biografia</strong>
+                <p style={{ margin: "0.4em 0 0 0" }}>{bio}</p>
+              </div>
+            )}
           </section>
         )}
       </main>
-
       <Footer />
     </div>
   );
