@@ -109,9 +109,9 @@ export default function App() {
               )}
               */}
 
-              {/* Álbuns recentes */}
+              {/* Nome da banda e link para Spotify */}
               <div style={{ flex: 1, minWidth: 180 }}>
-                <h3 style={{ margin: "0 0 0.7em 0" }}>
+                <h3 style={{ margin: "0 0 0.7em 0.5em" }}>
                   {searchedArtist.name}
                   {searchedArtist.external_urls?.spotify && (
                     <a
@@ -129,12 +129,15 @@ export default function App() {
                     </a>
                   )}
                 </h3>
-                <h4 style={{ margin: "0 0 0.4em 0" }}>Álbuns recentes:</h4>
+                
+                {/* Álbuns recentes */}
+                <h4 style={{ margin: "0 0 0.4em 0.5em" }}>Álbuns mais recentes:</h4>
                 <div
                   style={{
                     display: "flex",
                     flexWrap: "wrap",
                     gap: "1.1em",
+                    margin: "0 0 0 0.5em"
                   }}
                 >
                   {albums.map((album) => (
@@ -177,9 +180,9 @@ export default function App() {
             {bio && (
               <div
                 style={{
-                  marginTop: 6,
+                  marginTop: 0,
                   width: "100%",
-                  background: "#181818cc",
+                  //background: "#181818cc",
                   borderRadius: 10,
                   padding: "1em 1em 0.8em 1em",
                   fontSize: "1.04em",
