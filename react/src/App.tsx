@@ -37,7 +37,9 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
-      <Header onLoginChange={() => {
+      <Header
+        loggedIn={!!(authInfo && authInfo.loggedIn)}
+        onLoginChange={() => {
         // Força rechecagem do login ao logar/deslogar
         const tokenStr = localStorage.getItem("spotify_token");
         if (tokenStr) {
@@ -50,7 +52,8 @@ export default function App() {
           setAuthInfo(null);
           setCheckingLogin(false);
         }
-      }} />
+        }}
+      />
 
       <Routes>
         <Route path="/" element={<Home authInfo={authInfo} checkingLogin={checkingLogin} />} />

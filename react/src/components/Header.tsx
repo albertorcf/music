@@ -2,10 +2,11 @@ import React from "react";
 import { SpotifyLoginButton } from "../components/SpotifyLoginButton";
 
 type HeaderProps = {
+  loggedIn: boolean;
   onLoginChange: () => void;
 };
 
-export const Header: React.FC<HeaderProps> = ({ onLoginChange }) => (
+export const Header: React.FC<HeaderProps> = ({ loggedIn, onLoginChange }) => (
   <header
     style={{
       display: "flex",
@@ -34,27 +35,42 @@ export const Header: React.FC<HeaderProps> = ({ onLoginChange }) => (
       </a>
     </nav>
 
-    <SpotifyLoginButton onLoginChange={onLoginChange} />
-
-    {/* Botão de logout */}
-    <button
-      onClick={() => {
-        localStorage.removeItem("spotify_token");
-        onLoginChange();
-      }}
-      style={{
-        background: "#1db954",
-        color: "#fff",
-        border: "none",
-        borderRadius: 20,
-        padding: "0.5em 1.2em",
-        fontWeight: 600,
-        fontSize: "1em",
-        marginLeft: 12,
-        cursor: "pointer",
-      }}
-    >
-      Logout do Spotify
-    </button>
+    {loggedIn ? (
+      <button
+        onClick={() => {
+          localStorage.removeItem("spotify_token");
+          onLoginChange();
+        }}
+        style={{
+          background: "#1db954",
+          color: "#fff",
+          border: "none",
+          borderRadius: 20,
+          padding: "0.5em 1.2em",
+          fontWeight: 600,
+          fontSize: "1em",
+          marginLeft: 12,
+          cursor: "pointer",
+        }}
+      >
+        Logout do Spotify
+      </button>
+    ) : (
+      <SpotifyLoginButton
+        onLoginChange={onLoginChange}
+        // Layout igual ao botão de logout
+        style={{
+          background: "#1db954",
+          color: "#fff",
+          border: "none",
+          borderRadius: 20,
+          padding: "0.5em 1.2em",
+          fontWeight: 600,
+          fontSize: "1em",
+          marginLeft: 12,
+          cursor: "pointer",
+        }}
+      />
+    )}
   </header>
 );

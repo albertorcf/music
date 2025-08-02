@@ -11,6 +11,7 @@ const SCOPES = [
 
 type SpotifyLoginButtonProps = {
   onLoginChange?: () => void;
+  style?: React.CSSProperties;
 };
 
 export function SpotifyLoginButton(props: SpotifyLoginButtonProps) {
@@ -38,17 +39,7 @@ export function SpotifyLoginButton(props: SpotifyLoginButtonProps) {
   return (
     <button
       onClick={handleLogin}
-      style={{
-        background: "#1db954",
-        color: "#fff",
-        border: "none",
-        borderRadius: 8,
-        padding: "0.8em 1.8em",
-        fontWeight: 600,
-        fontSize: "1em",
-        margin: "1em 0",
-        cursor: "pointer"
-      }}
+      style={props.style}
     >
       Login com Spotify
     </button>
