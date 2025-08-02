@@ -1,3 +1,4 @@
+// react/backend/server.js
 require("dotenv").config();
 const express = require("express");
 const fetch = require("node-fetch"); // node-fetch v2
@@ -36,6 +37,55 @@ app.get("/api/token", async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: "Erro ao fazer requisição", details: err });
+  }
+});
+
+/**
+ * Troca o code do OAuth pelo access_token do usuário
+ */
+app.get("/api/auth/callback", async (req, res) => {
+  const { code } = req.query;
+  const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
+  console.log("[BACKEND] Recebido code:", code);
+
+  if (!code) {
+    console.log("[BACKEND] Code ausente!");
+    return res.status(400).json({ error: "Parâmetro 'code' ausente." });
+  }
+
+  const auth = Buffer.from(
+    `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
+  ).toString("base64");
+
+  try {
+    console.log("[BACKEND] Fazendo requisição para /api/token com redirect_uri igual ao do app...");
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        code: code,
+        redirect_uri: "http://127.0.0.1:5173/callback", // Tem que ser idêntico ao usado no login
+      }),
+    });
+
+    const data = await response.json();
+    console.log("[BACKEND] Resposta do Spotify /api/token:", data);
+
+    if (data.access_token) {
+      console.log("[BACKEND] access_token OK! Retornando para frontend.");
+      res.json(data); // access_token, refresh_token, etc
+    } else {
+      console.log("[BACKEND] Falha ao obter token:", data);
+      res.status(500).json({ error: "Falha ao obter token do usuário", details: data });
+    }
+  } catch (err) {
+    console.log("[BACKEND] Erro na requisição:", err);
+    res.status(500).json({ error: "Erro na requisição para o Spotify", details: err });
   }
 });
 

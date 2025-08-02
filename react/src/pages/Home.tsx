@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Banner } from "../components/Banner";
 import { fetchSpotifyArtist, fetchSpotifyAlbums } from "../utils/fetchSpotifyArtist";
 import { fetchWikipediaBio } from "../utils/fetchWikipediaBio";
 import { getSpotifyToken } from "../utils/getSpotifyToken";
+import { checkSpotifyAuth } from "../utils/checkSpotifyAuth"; // <-- helper importado
 
 /**
  * Home page
@@ -14,6 +15,9 @@ export default function Home() {
   const [bio, setBio] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // --- Estado para status do Spotify login ---
+  const [authInfo, setAuthInfo] = useState<any>(null);
 
   // --- Handler: busca artista, álbuns e bio ---
   async function handleArtistSearch(artist: string) {
@@ -50,9 +54,51 @@ export default function Home() {
     }
   }
 
+  // --- Checa login do Spotify ao carregar ---
+  useEffect(() => {
+    const tokenStr = localStorage.getItem("spotify_token");
+    if (tokenStr) {
+      const tk = JSON.parse(tokenStr);
+      checkSpotifyAuth(tk.access_token).then(setAuthInfo);
+    }
+  }, []);
+
   // --- Renderização ---
   return (
     <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
+      {/* --- Status do login do Spotify --- */}
+      <div style={{ maxWidth: 900, margin: "0 auto", marginTop: 16 }}>
+        {!authInfo && (
+          <div style={{ color: "#bbb" }}>
+            <em>Checando login no Spotify...</em>
+          </div>
+        )}
+        {authInfo && authInfo.loggedIn && (
+          <div style={{ color: "#1db954", marginBottom: 12 }}>
+            <strong>Você está logado no Spotify!</strong>
+            <div style={{ marginTop: 8 }}>
+              <b>Música tocando:</b>
+              <pre style={{ background: "#232", color: "#fff", padding: 8 }}>
+                {typeof authInfo.playing === "string"
+                  ? authInfo.playing
+                  : JSON.stringify(authInfo.playing, null, 2)}
+              </pre>
+            </div>
+            <div style={{ marginTop: 8 }}>
+              <b>Dispositivos ativos:</b>
+              <pre style={{ background: "#232", color: "#fff", padding: 8 }}>
+                {JSON.stringify(authInfo.devices, null, 2)}
+              </pre>
+            </div>
+          </div>
+        )}
+        {authInfo && !authInfo.loggedIn && (
+          <div style={{ color: "#ff7272", marginBottom: 12 }}>
+            Não está logado no Spotify: {authInfo.error}
+          </div>
+        )}
+      </div>
+
       <Banner userName="visitante" onSearch={handleArtistSearch} />
 
       <main style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -125,7 +171,7 @@ export default function Home() {
                     </a>
                   )}
                 </h3>
-                
+
                 {/* Álbuns recentes */}
                 <h4 style={{ margin: "0 0 0.4em 0.5em" }}>Álbuns mais recentes:</h4>
                 <div
