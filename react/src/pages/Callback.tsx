@@ -28,42 +28,44 @@ export default function Callback({ onLoginChange }: CallbackProps) {
     setCode(codeFromUrl);
 
     // Só chama o backend se houver code
-    if (codeFromUrl) {
-      setStatus("loading");
+    if (!codeFromUrl) {
+      setStatus("init");
       setError(null);
-
-      fetch(`http://localhost:3030/api/auth/callback?code=${encodeURIComponent(codeFromUrl)}`)
-        .then(async (res) => {
-          if (!res.ok) {
-            const errData = await res.json();
-            throw new Error(errData.error || "Erro ao autenticar");
-          }
-          return res.json();
-        })
-
-        .then((data) => {
-          setToken(data);
-          setStatus("ok");
-          // Limpa o code da URL
-          window.history.replaceState({}, document.title, "/callback");
-
-          // Salva o token no localStorage!
-          localStorage.setItem("spotify_token", JSON.stringify(data));
-          
-          console.log("[Callback] Token de usuário recebido:", data);
-          // Chama onLoginChange se existir
-          if (onLoginChange) onLoginChange();
-          // Redireciona para home após 1s
-          setTimeout(() => {
-            navigate("/", { replace: true });
-          }, 1000);
-        })
-
-        .catch((err) => {
-          setError(err.message || "Erro desconhecido");
-          setStatus("error");
-        });
+      return;
     }
+
+    setStatus("loading");
+    setError(null);
+
+    fetch(`http://localhost:3030/api/auth/callback?code=${encodeURIComponent(codeFromUrl)}`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Erro ao autenticar");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setToken(data);
+        setStatus("ok");
+        // Limpa o code da URL
+        window.history.replaceState({}, document.title, "/callback");
+
+        // Salva o token no localStorage!
+        localStorage.setItem("spotify_token", JSON.stringify(data));
+        
+        console.log("[Callback] Token de usuário recebido:", data);
+        // Chama onLoginChange se existir
+        if (onLoginChange) onLoginChange();
+        // Redireciona para home após 1s
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 1000);
+      })
+      .catch((err) => {
+        setError(err.message || "Erro desconhecido");
+        setStatus("error");
+      });
   }, [location.search, navigate]);
 
   return (
@@ -73,11 +75,15 @@ export default function Callback({ onLoginChange }: CallbackProps) {
         Código de autorização: <code>{code || "Nenhum código na URL"}</code>
       </p>
       {status === "loading" && <p>Consultando o backend para obter access_token...</p>}
-      {status === "error" && (
+      
+
+      {/* Só mostra erro se há code e status é error e não está em ok */}
+      {status === "error" && code && !token && (
         <p style={{ color: "#ff7272" }}>
           Erro ao autenticar: {error}
         </p>
       )}
+
       {status === "ok" && (
         <div style={{ wordBreak: "break-all", background: "#222", borderRadius: 10, padding: 10, marginTop: 10 }}>
           <strong>Token de acesso recebido!</strong>
