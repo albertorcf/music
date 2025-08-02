@@ -68,7 +68,7 @@ export default function App() {
         {searchedArtist && (
           <section
             style={{
-              background: "linear-gradient(90deg, #191414 0%, #222 100%)",
+              background: "linear-gradient(90deg, #292424 0%, #333 100%)",
               color: "#fff",
               borderRadius: 16,
               maxWidth: 600,
