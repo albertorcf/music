@@ -18,6 +18,7 @@ export default function Home() {
 
   // --- Estado para status do Spotify login ---
   const [authInfo, setAuthInfo] = useState<any>(null);
+  const [checkingLogin, setCheckingLogin] = useState(true);
 
   // --- Handler: busca artista, álbuns e bio ---
   async function handleArtistSearch(artist: string) {
@@ -59,7 +60,12 @@ export default function Home() {
     const tokenStr = localStorage.getItem("spotify_token");
     if (tokenStr) {
       const tk = JSON.parse(tokenStr);
-      checkSpotifyAuth(tk.access_token).then(setAuthInfo);
+      checkSpotifyAuth(tk.access_token).then((info) => {
+        setAuthInfo(info);
+        setCheckingLogin(false);
+      });
+    } else {
+      setCheckingLogin(false);
     }
   }, []);
 
@@ -69,7 +75,7 @@ export default function Home() {
 
       {/* --- Status do login do Spotify --- */}
       <div style={{ maxWidth: 900, margin: "0 auto", marginTop: 16 }}>
-        {!authInfo && (
+        {checkingLogin && (
           <div style={{ color: "#bbb" }}>
             <em>Checando login no Spotify...</em>
           </div>
