@@ -19,7 +19,7 @@ export const Banner: React.FC<BannerProps> = ({ userName = "visitante", onSearch
   return (
     <section
       style={{
-        background: "linear-gradient(90deg, #1db954 30%, #191414 100%)",
+        background: "linear-gradient(90deg, #0da944 30%, #292424 100%)",
         color: "#fff",
         padding: "1.5rem 1rem 2rem 1rem",
         borderRadius: 16,
