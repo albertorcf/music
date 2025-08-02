@@ -1,14 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Banner } from "../components/Banner";
 import { fetchSpotifyArtist, fetchSpotifyAlbums } from "../utils/fetchSpotifyArtist";
 import { fetchWikipediaBio } from "../utils/fetchWikipediaBio";
 import { getSpotifyToken } from "../utils/getSpotifyToken";
-import { checkSpotifyAuth } from "../utils/checkSpotifyAuth"; // <-- helper importado
 
 /**
  * Home page
  */
-export default function Home() {
+type HomeProps = {
+  authInfo: any;
+  setAuthInfo: (info: any) => void;
+  checkingLogin: boolean;
+};
+
+export default function Home({ authInfo, setAuthInfo, checkingLogin }: HomeProps) {
   // --- Estados do app ---
   const [searchedArtist, setSearchedArtist] = useState<any>(null);
   const [albums, setAlbums] = useState<any[]>([]);
@@ -16,9 +21,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Estado para status do Spotify login ---
-  const [authInfo, setAuthInfo] = useState<any>(null);
-  const [checkingLogin, setCheckingLogin] = useState(true);
+
 
   // --- Handler: busca artista, álbuns e bio ---
   async function handleArtistSearch(artist: string) {
@@ -56,18 +59,7 @@ export default function Home() {
   }
 
   // --- Checa login do Spotify ao carregar ---
-  useEffect(() => {
-    const tokenStr = localStorage.getItem("spotify_token");
-    if (tokenStr) {
-      const tk = JSON.parse(tokenStr);
-      checkSpotifyAuth(tk.access_token).then((info) => {
-        setAuthInfo(info);
-        setCheckingLogin(false);
-      });
-    } else {
-      setCheckingLogin(false);
-    }
-  }, []);
+
 
   // --- Renderização ---
   return (
