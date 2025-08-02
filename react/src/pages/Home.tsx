@@ -7,13 +7,13 @@ import { getSpotifyToken } from "../utils/getSpotifyToken";
 /**
  * Home page
  */
+
 type HomeProps = {
   authInfo: any;
-  setAuthInfo: (info: any) => void;
   checkingLogin: boolean;
 };
 
-export default function Home({ authInfo, setAuthInfo, checkingLogin }: HomeProps) {
+export default function Home({ authInfo, checkingLogin }: HomeProps) {
   // --- Estados do app ---
   const [searchedArtist, setSearchedArtist] = useState<any>(null);
   const [albums, setAlbums] = useState<any[]>([]);

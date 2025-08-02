@@ -40,7 +40,7 @@ export default function App() {
       <Header />
 
       <Routes>
-        <Route path="/" element={<Home authInfo={authInfo} setAuthInfo={setAuthInfo} checkingLogin={checkingLogin} />} />
+        <Route path="/" element={<Home authInfo={authInfo} checkingLogin={checkingLogin} />} />
         <Route path="/callback" element={<Callback />} />
       </Routes>
 
