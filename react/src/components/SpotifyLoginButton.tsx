@@ -1,4 +1,4 @@
-import React from "react";
+// react/src/components/SpotifyLoginButton.tsx
 
 // Aqui lemos a variável de ambiente do Vite/React
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -9,7 +9,11 @@ const SCOPES = [
   "user-read-playback-state"
 ].join(" ");
 
-export function SpotifyLoginButton() {
+type SpotifyLoginButtonProps = {
+  onLoginChange?: () => void;
+};
+
+export function SpotifyLoginButton(props: SpotifyLoginButtonProps) {
   const handleLogin = () => {
     // Checagem extra para debug
     if (!CLIENT_ID) {
@@ -28,6 +32,9 @@ export function SpotifyLoginButton() {
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
   };
 
+  // Quando login for bem-sucedido, se props.onLoginChange existir, chame-a
+  // Exemplo:
+  // if (props.onLoginChange) props.onLoginChange();
   return (
     <button
       onClick={handleLogin}

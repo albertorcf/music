@@ -37,11 +37,37 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#121212", color: "#fff" }}>
-      <Header />
+      <Header onLoginChange={() => {
+        // Força rechecagem do login ao logar/deslogar
+        const tokenStr = localStorage.getItem("spotify_token");
+        if (tokenStr) {
+          const tk = JSON.parse(tokenStr);
+          checkSpotifyAuth(tk.access_token).then((info) => {
+            setAuthInfo(info);
+            setCheckingLogin(false);
+          });
+        } else {
+          setAuthInfo(null);
+          setCheckingLogin(false);
+        }
+      }} />
 
       <Routes>
         <Route path="/" element={<Home authInfo={authInfo} checkingLogin={checkingLogin} />} />
-        <Route path="/callback" element={<Callback />} />
+        <Route path="/callback" element={<Callback onLoginChange={() => {
+          // Força rechecagem do login ao logar/deslogar
+          const tokenStr = localStorage.getItem("spotify_token");
+          if (tokenStr) {
+            const tk = JSON.parse(tokenStr);
+            checkSpotifyAuth(tk.access_token).then((info) => {
+              setAuthInfo(info);
+              setCheckingLogin(false);
+            });
+          } else {
+            setAuthInfo(null);
+            setCheckingLogin(false);
+          }
+        }} />} />
       </Routes>
 
       <Footer />

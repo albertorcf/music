@@ -1,7 +1,11 @@
 import React from "react";
 import { SpotifyLoginButton } from "../components/SpotifyLoginButton";
 
-export const Header: React.FC = () => (
+type HeaderProps = {
+  onLoginChange: () => void;
+};
+
+export const Header: React.FC<HeaderProps> = ({ onLoginChange }) => (
   <header
     style={{
       display: "flex",
@@ -30,6 +34,27 @@ export const Header: React.FC = () => (
       </a>
     </nav>
 
-    <SpotifyLoginButton />
+    <SpotifyLoginButton onLoginChange={onLoginChange} />
+
+    {/* Botão de logout */}
+    <button
+      onClick={() => {
+        localStorage.removeItem("spotify_token");
+        onLoginChange();
+      }}
+      style={{
+        background: "#1db954",
+        color: "#fff",
+        border: "none",
+        borderRadius: 20,
+        padding: "0.5em 1.2em",
+        fontWeight: 600,
+        fontSize: "1em",
+        marginLeft: 12,
+        cursor: "pointer",
+      }}
+    >
+      Logout do Spotify
+    </button>
   </header>
 );

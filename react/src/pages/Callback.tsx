@@ -8,7 +8,11 @@ import { useLocation, useNavigate } from "react-router-dom"; // IMPORTANTE: useN
  * - Chama o backend para trocar pelo access_token do usuário
  * - Mostra status, erros, e token (apenas para debug)
  */
-export default function Callback() {
+type CallbackProps = {
+  onLoginChange?: () => void;
+};
+
+export default function Callback({ onLoginChange }: CallbackProps) {
   const location = useLocation();
   const navigate = useNavigate(); // <-- Aqui você declara
 
@@ -47,6 +51,8 @@ export default function Callback() {
           localStorage.setItem("spotify_token", JSON.stringify(data));
           
           console.log("[Callback] Token de usuário recebido:", data);
+          // Chama onLoginChange se existir
+          if (onLoginChange) onLoginChange();
           // Redireciona para home após 1s
           setTimeout(() => {
             navigate("/", { replace: true });
