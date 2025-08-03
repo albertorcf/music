@@ -10,6 +10,11 @@ type SpotifyStatusProps = {
 
 
 export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
+  // Não renderiza nada se não houver status para mostrar
+  if (!checkingLogin && (!authInfo || (!authInfo.loggedIn && !authInfo.error))) {
+    return null;
+  }
+
   return (
     <section
       style={{
@@ -71,7 +76,7 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
           </div>
         </div>
       )}
-      {authInfo && !authInfo.loggedIn && (
+      {authInfo && !authInfo.loggedIn && authInfo.error && (
         <div style={{ color: "#ff7272", marginBottom: 8 }}>
           Não está logado no Spotify: {authInfo.error}
         </div>
