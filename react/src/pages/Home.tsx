@@ -1,12 +1,6 @@
-import { useState } from "react";
+// react/src/pages/Home.tsx
 import { Banner } from "../components/Banner";
-import { fetchSpotifyArtist, fetchSpotifyAlbums } from "../utils/fetchSpotifyArtist";
-import { fetchWikipediaBio } from "../utils/fetchWikipediaBio";
-import { getSpotifyToken } from "../utils/getSpotifyToken";
-
-/**
- * Home page
- */
+import { useArtistSearch } from "../hooks/useArtistSearch";
 
 type HomeProps = {
   authInfo: any;
@@ -14,52 +8,15 @@ type HomeProps = {
 };
 
 export default function Home({ authInfo, checkingLogin }: HomeProps) {
-  // --- Estados do app ---
-  const [searchedArtist, setSearchedArtist] = useState<any>(null);
-  const [albums, setAlbums] = useState<any[]>([]);
-  const [bio, setBio] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-
-
-  // --- Handler: busca artista, álbuns e bio ---
-  async function handleArtistSearch(artist: string) {
-    setError(null);
-    setLoading(true);
-    setSearchedArtist(null);
-    setAlbums([]);
-    setBio(null);
-
-    try {
-      // Obtém token do backend
-      const SPOTIFY_TOKEN = await getSpotifyToken();
-
-      // Busca artista na API Spotify
-      const artistData = await fetchSpotifyArtist(artist, SPOTIFY_TOKEN);
-      if (!artistData) {
-        setError("Artista não encontrado.");
-        setLoading(false);
-        return;
-      }
-      setSearchedArtist(artistData);
-
-      // Busca álbuns recentes
-      const albumsData = await fetchSpotifyAlbums(artistData.id, SPOTIFY_TOKEN);
-      setAlbums(albumsData.slice(0, 3)); // mostra até 3 álbuns
-
-      // Busca biografia (Wikipedia)
-      const wikiBio = await fetchWikipediaBio(artistData.name);
-      setBio(wikiBio);
-    } catch (err: any) {
-      setError("Erro ao buscar dados no Spotify/Wikipedia.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // --- Checa login do Spotify ao carregar ---
-
+  // --- Hook customizado para busca de artista, álbuns e bio ---
+  const {
+    searchedArtist,
+    albums,
+    bio,
+    loading,
+    error,
+    handleArtistSearch,
+  } = useArtistSearch();
 
   // --- Renderização ---
   return (
@@ -155,24 +112,6 @@ export default function Home({ authInfo, checkingLogin }: HomeProps) {
                 flexWrap: "wrap",
               }}
             >
-              {/* Imagem do artista */}
-              {/*
-              {searchedArtist.images?.[0]?.url && (
-                <img
-                  src={searchedArtist.images[0].url}
-                  alt={searchedArtist.name}
-                  style={{
-                    width: 120,
-                    minWidth: 100,
-                    maxWidth: "40vw",
-                    borderRadius: 12,
-                    objectFit: "cover",
-                    boxShadow: "0 2px 8px #19141480",
-                    marginBottom: 0,
-                  }}
-                />
-              )}
-              */}
 
               {/* Nome da banda e link para Spotify */}
               <div style={{ flex: 1, minWidth: 180 }}>
