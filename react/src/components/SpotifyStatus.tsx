@@ -8,9 +8,21 @@ type SpotifyStatusProps = {
   checkingLogin: boolean;
 };
 
+
 export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", marginTop: 16 }}>
+    <section
+      style={{
+        background: "linear-gradient(90deg, #292424 30%, #393434 100%)",
+        color: "#fff",
+        padding: "1.5rem 1rem 2rem 1rem",
+        borderRadius: 16,
+        maxWidth: 600,
+        margin: "1rem auto 1rem auto",
+        boxShadow: "0 4px 24px #0004",
+      }}
+      aria-label="Status do Spotify"
+    >
       {checkingLogin && (
         <div style={{ color: "#bbb" }}>
           <em>Checando login no Spotify...</em>
@@ -37,14 +49,14 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
 
           {/* Dispositivos */}
           <div style={{ marginTop: 8 }}>
-            <b>Dispositivos ativos:</b>{" "}
+            <b>Dispositivos:</b>{" "}
             {authInfo.devices && authInfo.devices.length > 0 ? (
               <>
                 <span style={{ color: "#fff" }}>
                   {authInfo.devices.map((d: any) => d.name).join(", ")}
                 </span>
                 <br />
-                <span style={{ color: "#bbb" }}>
+                <span>
                   {(() => {
                     const atual = authInfo.devices.find((d: any) => d.is_active);
                     return atual
@@ -64,6 +76,6 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
           Não está logado no Spotify: {authInfo.error}
         </div>
       )}
-    </div>
+    </section>
   );
 }
