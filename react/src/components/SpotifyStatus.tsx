@@ -15,7 +15,7 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
       style={{
         background: "linear-gradient(90deg, #292424 30%, #393434 100%)",
         color: "#fff",
-        padding: "1.5rem 1rem 2rem 1rem",
+        padding: "1.5rem 1rem 1.5rem 1rem",
         borderRadius: 16,
         maxWidth: 600,
         margin: "1rem auto 1rem auto",
@@ -29,7 +29,7 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
         </div>
       )}
       {authInfo && authInfo.loggedIn && (
-        <div style={{ color: "#1db954", marginBottom: 12 }}>
+        <div style={{ color: "#1db954", marginBottom: 8 }}>
           <strong>Você está logado no Spotify!</strong>
 
           {/* Música tocando */}
@@ -49,19 +49,19 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
 
           {/* Dispositivos */}
           <div style={{ marginTop: 8 }}>
-            <b>Dispositivos:</b>{" "}
+            <b>Dispositivos ativos:</b>{" "}
             {authInfo.devices && authInfo.devices.length > 0 ? (
               <>
                 <span style={{ color: "#fff" }}>
                   {authInfo.devices.map((d: any) => d.name).join(", ")}
                 </span>
                 <br />
-                <span>
+                <span style={{ color: "#fff" }}>
                   {(() => {
                     const atual = authInfo.devices.find((d: any) => d.is_active);
                     return atual
-                      ? `Dispositivo atual: ${atual.name}`
-                      : "Nenhum dispositivo em uso agora";
+                      ? <><b style={{ color: "#1db954" }}>Dispositivo atual:</b> {atual.name}</>
+                      : <span style={{ color: "#bbb" }}>Nenhum dispositivo em uso agora</span>;
                   })()}
                 </span>
               </>
@@ -72,7 +72,7 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
         </div>
       )}
       {authInfo && !authInfo.loggedIn && (
-        <div style={{ color: "#ff7272", marginBottom: 12 }}>
+        <div style={{ color: "#ff7272", marginBottom: 8 }}>
           Não está logado no Spotify: {authInfo.error}
         </div>
       )}
