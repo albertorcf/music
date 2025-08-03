@@ -1,4 +1,5 @@
 // react/src/components/ArtistInfo.tsx
+import { cardStyle } from "../styles/sharedStyles";
 
 /**
  * Exibe informações do artista: nome, link Spotify, álbuns e biografia.
@@ -13,19 +14,7 @@ export function ArtistInfo({ searchedArtist, albums, bio }: ArtistInfoProps) {
   if (!searchedArtist) return null;
 
   return (
-    <section
-      style={{
-        background: "linear-gradient(90deg, #292424 30%, #393434 100%)",
-        color: "#fff",
-        padding: "1.5rem 1rem 1.5rem 1rem",
-        borderRadius: 16,
-        maxWidth: 600,
-        margin: "1rem auto 1rem auto",
-        boxShadow: "0 4px 24px #0004",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1.5rem",
-      }}
+    <section style={cardStyle}
     >
       {/* Info artista e álbuns recentes */}
       <div

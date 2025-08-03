@@ -1,5 +1,6 @@
 // react/src/components/Banner.tsx
 import React, { useState } from "react";
+import { cardStyleGreen } from "../styles/sharedStyles";
 
 type BannerProps = {
   userName?: string;
@@ -17,18 +18,7 @@ export const Banner: React.FC<BannerProps> = ({ userName = "visitante", onSearch
   };
 
   return (
-    <section
-      style={{
-        background: "linear-gradient(90deg, #0da944 30%, #292424 100%)",
-        color: "#fff",
-        padding: "1.5rem 1rem 2rem 1rem",
-        borderRadius: 16,
-        maxWidth: 600,
-        margin: "1rem auto 1rem auto",
-        boxShadow: "0 4px 24px #0004",
-      }}
-      aria-label="Banner de boas-vindas"
-    >
+    <section style={cardStyleGreen} aria-label="Banner de boas-vindas">
       <h2 style={{ marginBottom: 8 }}>Olá! Bem-vindo ao Music Social!</h2>
 
       <p style={{ marginBottom: 16, fontSize: "1.1rem" }}>

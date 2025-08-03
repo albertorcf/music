@@ -1,4 +1,5 @@
 // react/src/components/SpotifyStatus.tsx
+import { cardStyle } from "../styles/sharedStyles";
 
 /**
  * Exibe o status do login do Spotify, música tocando e dispositivos ativos.
@@ -17,15 +18,7 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
 
   return (
     <section
-      style={{
-        background: "linear-gradient(90deg, #292424 30%, #393434 100%)",
-        color: "#fff",
-        padding: "1.5rem 1rem 1.5rem 1rem",
-        borderRadius: 16,
-        maxWidth: 600,
-        margin: "1rem auto 1rem auto",
-        boxShadow: "0 4px 24px #0004",
-      }}
+      style={cardStyle}
       aria-label="Status do Spotify"
     >
       {checkingLogin && (
@@ -41,12 +34,14 @@ export function SpotifyStatus({ authInfo, checkingLogin }: SpotifyStatusProps) {
           <div style={{ marginTop: 8 }}>
             <b>Música tocando:</b>{" "}
             {authInfo.playing && authInfo.playing.item ? (
-              <span style={{ color: "#fff" }}>
-                {authInfo.playing.item.name}{" "}
-                <span style={{ color: "#bbb" }}>
-                  (por {authInfo.playing.item.artists.map((a: any) => a.name).join(", ")})
+              <>
+                <span style={{ color: "#fff" }}>
+                  {authInfo.playing.item.name}{" "}
+                  <span style={{ color: "#bbb" }}>
+                    (por {authInfo.playing.item.artists.map((a: any) => a.name).join(", ")})
+                  </span>
                 </span>
-              </span>
+              </>
             ) : (
               <span style={{ color: "#bbb" }}>Nenhuma música tocando no momento.</span>
             )}
