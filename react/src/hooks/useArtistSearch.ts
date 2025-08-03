@@ -1,3 +1,4 @@
+// react/src/hooks/useArtistSearch.ts
 import { useState } from "react";
 import { fetchSpotifyArtist, fetchSpotifyAlbums } from "../utils/fetchSpotifyArtist";
 import { fetchWikipediaBio } from "../utils/fetchWikipediaBio";
