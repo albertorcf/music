@@ -1,5 +1,4 @@
 // react/src/pages/Home.tsx
-
 import { Banner } from "../components/Banner";
 import { useArtistSearch } from "../hooks/useArtistSearch";
 
