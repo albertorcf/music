@@ -73,16 +73,43 @@ app.get("/api/auth/callback", async (req, res) => {
       }),
     });
 
-    const data = await response.json();
-    console.log("[BACKEND] Resposta do Spotify /api/token:", data);
+    const tokenData = await response.json();
+    console.log("[BACKEND] Resposta do Spotify /api/token:", tokenData);
 
-    if (data.access_token) {
-      console.log("[BACKEND] access_token OK! Retornando para frontend.");
-      res.json(data); // access_token, refresh_token, etc
-    } else {
-      console.log("[BACKEND] Falha ao obter token:", data);
-      res.status(500).json({ error: "Falha ao obter token do usuário", details: data });
+    if (!tokenData.access_token) {
+      console.log("[BACKEND] Falha ao obter token:", tokenData);
+      return res.status(500).json({ error: "Falha ao obter token do usuário", details: tokenData });
     }
+
+    // Etapa 2: Usar o access_token para buscar os dados do perfil do usuário
+    console.log("[BACKEND] Buscando dados do usuário em /v1/me...");
+    const userProfileResponse = await fetch("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    });
+
+    const userProfile = await userProfileResponse.json();
+    if (!userProfileResponse.ok) {
+      console.log("[BACKEND] Falha ao obter perfil do usuário:", userProfile);
+      return res.status(500).json({ error: "Falha ao obter perfil do usuário", details: userProfile });
+    }
+
+    console.log("[BACKEND] Perfil do usuário obtido:", userProfile);
+
+    // Etapa 3: Combinar os tokens e os dados do usuário em um único objeto de sessão
+    const session = {
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
+      user: {
+        id: userProfile.id,
+        name: userProfile.display_name,
+        email: userProfile.email,
+        avatarUrl: userProfile.images?.[0]?.url || null,
+      },
+    };
+
+    console.log("[BACKEND] Sessão completa pronta para enviar ao frontend:", session);
+    res.json(session);
   } catch (err) {
     console.log("[BACKEND] Erro na requisição:", err);
     res.status(500).json({ error: "Erro na requisição para o Spotify", details: err });

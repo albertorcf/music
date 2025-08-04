@@ -1,98 +1,56 @@
 // react/src/pages/Callback.tsx
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // IMPORTANTE: useNavigate vem do react-router-dom
+import { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 
-/**
- * Página de callback do OAuth Spotify
- * - Lê o code da URL
- * - Chama o backend para trocar pelo access_token do usuário
- * - Mostra status, erros, e token (apenas para debug)
- */
-type CallbackProps = {
-  onLoginChange?: () => void;
-};
-
-export default function Callback({ onLoginChange }: CallbackProps) {
+export default function Callback() {
+  const { handleLoginCallback } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
-  const navigate = useNavigate(); // <-- Aqui você declara
+  const effectRan = useRef(false); // Flag para lidar com o StrictMode do React
 
-  const [code, setCode] = useState<string | null>(null);
-  const [token, setToken] = useState<any>(null);
-  const [status, setStatus] = useState<"init" | "loading" | "ok" | "error">("init");
+  const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Lê o parâmetro "code" da URL
-    const params = new URLSearchParams(location.search);
-    const codeFromUrl = params.get("code");
-    setCode(codeFromUrl);
+    // Executa apenas uma vez, mesmo no StrictMode
+    if (effectRan.current === true) return;
+    effectRan.current = true;
 
-    // Só chama o backend se houver code
-    if (!codeFromUrl) {
-      setStatus("init");
-      setError(null);
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+
+    if (!code) {
+      setStatus("error");
+      setError("Código de autorização não encontrado.");
       return;
     }
 
-    setStatus("loading");
-    setError(null);
-
-    fetch(`http://localhost:3030/api/auth/callback?code=${encodeURIComponent(codeFromUrl)}`)
-      .then(async (res) => {
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Erro ao autenticar");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setToken(data);
+    handleLoginCallback(code)
+      .then(() => {
         setStatus("ok");
-        // Limpa o code da URL
-        window.history.replaceState({}, document.title, "/callback");
-
-        // Salva o token no localStorage!
-        localStorage.setItem("spotify_token", JSON.stringify(data));
-        
-        console.log("[Callback] Token de usuário recebido:", data);
-        // Chama onLoginChange se existir
-        if (onLoginChange) onLoginChange();
-        // Redireciona para home após 1s
-        setTimeout(() => {
-          navigate("/", { replace: true });
-        }, 1000);
+        // Redireciona para a página inicial após o sucesso
+        navigate("/", { replace: true });
       })
       .catch((err) => {
-        setError(err.message || "Erro desconhecido");
         setStatus("error");
+        setError(err.message || "Ocorreu um erro desconhecido.");
       });
-  }, [location.search, navigate]);
+  }, [handleLoginCallback, location.search, navigate]);
 
   return (
     <div style={{ margin: "2em", color: "#fff", maxWidth: 600 }}>
-      <h2>Login do Spotify em andamento...</h2>
-      <p>
-        Código de autorização: <code>{code || "Nenhum código na URL"}</code>
-      </p>
-      {status === "loading" && <p>Consultando o backend para obter access_token...</p>}
-      
-
-      {/* Só mostra erro se há code e status é error e não está em ok */}
-      {status === "error" && code && !token && (
-        <p style={{ color: "#ff7272" }}>
-          Erro ao autenticar: {error}
-        </p>
-      )}
-
-      {status === "ok" && (
-        <div style={{ wordBreak: "break-all", background: "#222", borderRadius: 10, padding: 10, marginTop: 10 }}>
-          <strong>Token de acesso recebido!</strong>
-          <pre style={{ fontSize: "0.93em", marginTop: 6 }}>
-            {JSON.stringify(token, null, 2)}
-          </pre>
-          {/* Aqui você pode redirecionar, salvar o token em context, etc */}
+      <h2>Autenticação em andamento...</h2>
+      {status === "loading" && <p>Verificando autorização, por favor aguarde...</p>}
+      {status === "error" && (
+        <div style={{ color: "#ff7272" }}>
+          <p>Erro ao autenticar:</p>
+          <p><i>{error}</i></p>
+          <button onClick={() => navigate("/")}>Voltar para a Home</button>
         </div>
       )}
+      {status === "ok" && <p>Login realizado com sucesso! Redirecionando...</p>}
     </div>
   );
 }
+

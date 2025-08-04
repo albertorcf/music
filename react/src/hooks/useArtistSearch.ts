@@ -1,23 +1,26 @@
 // react/src/hooks/useArtistSearch.ts
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchSpotifyArtist, fetchSpotifyAlbums } from "../utils/fetchSpotifyArtist";
 import { fetchWikipediaBio } from "../utils/fetchWikipediaBio";
-// Importa o hook do contexto do token
-import { useSpotifyToken } from "../context/SpotifyTokenContext";
-
+import { getSpotifyApiToken } from "../utils/getSpotifyApiToken"; // Importa a função para obter o token da API
 
 export function useArtistSearch() {
-  // Estados locais para busca
+  const [apiToken, setApiToken] = useState<string | null>(null);
   const [searchedArtist, setSearchedArtist] = useState<any>(null);
   const [albums, setAlbums] = useState<any[]>([]);
   const [bio, setBio] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Usa o contexto para obter o token do Spotify
-  const { token: SPOTIFY_TOKEN } = useSpotifyToken();
+  // Busca o token da API pública quando o hook é inicializado
+  useEffect(() => {
+    getSpotifyApiToken()
+      .then(setApiToken)
+      .catch(() => {
+        setError("Não foi possível obter o token para pesquisar. Tente recarregar a página.");
+      });
+  }, []);
 
-  // Handler: busca artista, álbuns e bio
   async function handleArtistSearch(artist: string) {
     setError(null);
     setLoading(true);
@@ -26,15 +29,15 @@ export function useArtistSearch() {
     setBio(null);
 
     try {
-      // Garante que o token está disponível
-      if (!SPOTIFY_TOKEN) {
-        setError("Token do Spotify não disponível. Tente novamente mais tarde.");
+      // Garante que o token da API pública está disponível
+      if (!apiToken) {
+        setError("Token de API não disponível. A busca não pode ser realizada.");
         setLoading(false);
         return;
       }
 
-      // Busca artista na API Spotify
-      const artistData = await fetchSpotifyArtist(artist, SPOTIFY_TOKEN);
+      // Busca o artista usando o token da API
+      const artistData = await fetchSpotifyArtist(artist, apiToken);
       if (!artistData) {
         setError("Artista não encontrado.");
         setLoading(false);
@@ -42,15 +45,15 @@ export function useArtistSearch() {
       }
       setSearchedArtist(artistData);
 
-      // Busca álbuns recentes
-      const albumsData = await fetchSpotifyAlbums(artistData.id, SPOTIFY_TOKEN);
+      // Busca os álbuns usando o mesmo token
+      const albumsData = await fetchSpotifyAlbums(artistData.id, apiToken);
       setAlbums(albumsData.slice(0, 3));
 
-      // Busca biografia (Wikipedia)
+      // A busca da biografia não requer autenticação
       const wikiBio = await fetchWikipediaBio(artistData.name);
       setBio(wikiBio);
     } catch (err: any) {
-      setError("Erro ao buscar dados no Spotify/Wikipedia.");
+      setError("Erro ao buscar dados: " + err.message);
     } finally {
       setLoading(false);
     }
