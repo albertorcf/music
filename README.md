@@ -1,1 +1,5 @@
 # music
+
+- [Troubleshooting](#troubleshooting)
+
+## Troubleshooting
