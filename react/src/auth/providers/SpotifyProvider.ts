@@ -4,8 +4,6 @@ import type { AuthProvider, AuthSession } from "../types";
 const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const SPOTIFY_REDIRECT_URI = "http://127.0.0.1:5173/callback";
 
-
-
 /**
  * Implementação do AuthProvider para o Spotify.
  *
@@ -21,7 +19,19 @@ export const SpotifyProvider: AuthProvider = {
    * de volta para a `SPOTIFY_REDIRECT_URI` com um código de autorização.
    */
   login: async () => {
-    const scope = "user-read-private user-read-email user-read-playback-state user-read-currently-playing";
+    //const scope = "user-read-private user-read-email user-read-playback-state user-read-currently-playing";
+    const scope = [
+      "user-read-private",
+      "user-read-email",
+      "user-read-playback-state",
+      "user-read-currently-playing",
+      "playlist-modify-public",
+      "playlist-modify-private",
+      "playlist-read-private",
+      "playlist-read-collaborative",
+      "ugc-image-upload" // Adicione esta scope
+    ].join(" ");
+    
     const params = new URLSearchParams({
       response_type: "code",
       client_id: SPOTIFY_CLIENT_ID,

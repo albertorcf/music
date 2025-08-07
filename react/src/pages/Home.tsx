@@ -4,6 +4,7 @@ import { useArtistSearch } from "../hooks/useArtistSearch";
 import { SpotifyStatus } from "../components/SpotifyStatus";
 import { ArtistInfo } from "../components/ArtistInfo";
 import { useAuth } from "../auth/useAuth"; // Importa o hook
+import { CreateCollaborativeSession } from "../components/CreateCollaborativeSession"; // Novo import
 
 export default function Home() {
   const { session } = useAuth(); // Usa o hook para obter a sessão
@@ -18,6 +19,9 @@ export default function Home() {
       <Banner userName={session?.user?.name || "visitante"} onSearch={handleArtistSearch} />
 
       <main style={{ maxWidth: 900, margin: "0 auto" }}>
+        {/* Adiciona o novo componente */}
+        {session && <CreateCollaborativeSession />}
+
         {loading && <p>Carregando...</p>}
         {error && <p style={{ color: "#ff7272" }}>{error}</p>}
         <ArtistInfo searchedArtist={searchedArtist} albums={albums} bio={bio} />
