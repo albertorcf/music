@@ -97,33 +97,33 @@ export function CreateCollaborativeSession() {
   return (
     <section style={cardStyle}>
       <h3>Criar Sessão Colaborativa</h3>
-      {error && <div style={{ color: '#ff7272', marginBottom: 0 }}>{error}</div>}
+      {error && <div style={{ color: '#ff7272', fontSize: 14 }}>{error}</div>}
 
-      <div style={{ margin: '4px' }}>
-        <input
-          type="text"
-          value={playlistName}
-          onChange={(e) => setPlaylistName(e.target.value)}
-          style={{ padding: 4, width: '100%' }}
-        />
-      </div>
+      <input
+        type="text"
+        value={playlistName}
+        onChange={(e) => setPlaylistName(e.target.value)}
+        style={{ padding: '2px 6px', width: '100%', fontSize: 15, borderRadius: 4, border: '1px solid #444', background: '#222', color: '#fff' }}
+      />
 
       <button
         onClick={createSession}
         disabled={isCreating}
         style={{
-          padding: '4px',
+          padding: '4px 10px',
           background: '#1DB954',
           color: 'white',
           border: 'none',
-          borderRadius: 4
+          borderRadius: 4,
+          fontSize: 15,
+          marginTop: 2
         }}
       >
         {isCreating ? 'Criando...' : 'Criar Playlist'}
       </button>
 
       {playlistLink && (
-        <div style={{ marginTop: 12 }}>
+        <div style={{ marginTop: 8 }}>
           <a href={playlistLink} target="_blank" rel="noopener noreferrer">
             Abrir Playlist no Spotify
           </a>
