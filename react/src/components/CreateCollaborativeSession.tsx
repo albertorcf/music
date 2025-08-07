@@ -103,7 +103,17 @@ export function CreateCollaborativeSession() {
         type="text"
         value={playlistName}
         onChange={(e) => setPlaylistName(e.target.value)}
-        style={{ padding: '2px 6px', width: '100%', fontSize: 15, borderRadius: 4, border: '1px solid #444', background: '#222', color: '#fff' }}
+        style={{
+          padding: '2px 6px',
+          width: '100%',
+          fontSize: 15,
+          borderRadius: 4,
+          border: '1px solid #444',
+          background: '#222',
+          color: '#fff',
+          boxSizing: 'border-box',
+          minWidth: 0
+        }}
       />
 
       <button
