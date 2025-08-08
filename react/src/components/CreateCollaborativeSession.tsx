@@ -10,6 +10,7 @@ export function CreateCollaborativeSession() {
   const [error, setError] = useState<string | null>(null);
   const [playlistLink, setPlaylistLink] = useState('');
   const [playlistId, setPlaylistId] = useState('');
+  const [playlistTitle, setPlaylistTitle] = useState('');
   const [tracks, setTracks] = useState<any[]>([]);
   const [isLoadingTracks, setIsLoadingTracks] = useState(false);
 
@@ -54,6 +55,7 @@ export function CreateCollaborativeSession() {
 
       setPlaylistLink(playlist.external_urls.spotify);
       setPlaylistId(playlist.id);
+      setPlaylistTitle(playlist.name);
 
       // Verificar o status colaborativo
       const verifyResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}`, {
@@ -87,11 +89,27 @@ export function CreateCollaborativeSession() {
     setIsLoadingTracks(true);
     setError(null);
     setTracks([]);
+    setPlaylistTitle(''); // Clear previous title
 
     try {
       // Extrai o ID da URL se necessário
       const id = playlistId.includes('/') ? playlistId.split('/').pop()?.split('?')[0] : playlistId;
 
+      // Fetch playlist details
+      const playlistDetailsResponse = await fetch(`https://api.spotify.com/v1/playlists/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${session.accessToken}`
+        }
+      });
+
+      if (!playlistDetailsResponse.ok) {
+        const errorData = await playlistDetailsResponse.json();
+        throw new Error(errorData.error?.message || 'Falha ao buscar detalhes da playlist');
+      }
+      const playlistDetails = await playlistDetailsResponse.json();
+      setPlaylistTitle(playlistDetails.name);
+
+      // Fetch playlist tracks
       const response = await fetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
         headers: {
           'Authorization': `Bearer ${session.accessToken}`
@@ -198,7 +216,7 @@ export function CreateCollaborativeSession() {
 
       {tracks.length > 0 && (
         <div style={{ marginTop: 0 }}>
-          <h4 style={{ marginTop: 8 }}>Músicas na Playlist:</h4>
+          <h4 style={{ marginBottom: 8 }}>Músicas na Playlist{playlistTitle ? `: ${playlistTitle}` : ''}</h4>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {tracks.map((item, index) => (
               <li key={index} style={{ marginBottom: 4 }}>
