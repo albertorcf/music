@@ -49,31 +49,6 @@ export function CreateCollaborativeSession() {
       console.log('---'); // DEBUG
       console.log('Playlist criada:', playlist);
 
-      /*
-      // Adicione um delay de 1 segundo entre as requisições
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 2. Ativa modo colaborativo
-      const collaborativeResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${session.accessToken}`,
-          'Content-Type': 'application/json'
-          // Remova o header 'If-None-Match' que estava causando o erro CORS
-        },
-        body: JSON.stringify({
-          name: playlistName, // Mantém o nome original
-          public: true,      // Mantém como pública
-          collaborative: true // Ativa o modo colaborativo
-        })
-      });
-      console.log('Status modo colaborativo:', collaborativeResponse.status); // DEBUG
-
-      if (!collaborativeResponse.ok) {
-        throw new Error('Falha ao ativar modo colaborativo');
-      }
-      */
-
       setPlaylistLink(playlist.external_urls.spotify);
 
       // Verificar o status colaborativo
