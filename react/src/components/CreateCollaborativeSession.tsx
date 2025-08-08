@@ -13,6 +13,8 @@ export function CreateCollaborativeSession() {
   const [playlistTitle, setPlaylistTitle] = useState('');
   const [tracks, setTracks] = useState<any[]>([]);
   const [isLoadingTracks, setIsLoadingTracks] = useState(false);
+  const [trackUrl, setTrackUrl] = useState('');
+  const [isAddingTrack, setIsAddingTrack] = useState(false);
 
   const createSession = async () => {
     if (!session?.accessToken) {
@@ -132,6 +134,63 @@ export function CreateCollaborativeSession() {
     }
   };
 
+  const addTrackToPlaylist = async () => {
+    if (!session?.accessToken) {
+      setError('Nenhum usuário logado');
+      return;
+    }
+
+    if (!playlistId) {
+      setError('Nenhuma playlist selecionada para adicionar a música.');
+      return;
+    }
+
+    if (!trackUrl) {
+      setError('Por favor, insira a URL da música.');
+      return;
+    }
+
+    setIsAddingTrack(true);
+    setError(null);
+
+    try {
+      // Extrai o ID da música da URL
+      const trackIdMatch = trackUrl.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+      if (!trackIdMatch || !trackIdMatch[1]) {
+        throw new Error('URL da música inválida. Certifique-se de que é uma URL de faixa do Spotify.');
+      }
+      const trackId = trackIdMatch[1];
+
+      // Extrai o ID da playlist da URL se necessário
+      const currentPlaylistId = playlistId.includes('/') ? playlistId.split('/').pop()?.split('?')[0] : playlistId;
+
+      const response = await fetch(`https://api.spotify.com/v1/playlists/${currentPlaylistId}/tracks`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          uris: [`spotify:track:${trackId}`]
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Falha ao adicionar música à playlist');
+      }
+
+      setTrackUrl(''); // Limpa o input após adicionar
+      await fetchPlaylistTracks(); // Atualiza a lista de músicas
+
+    } catch (error) {
+      console.error('Erro ao adicionar música:', error);
+      setError(error instanceof Error ? error.message : 'Erro desconhecido');
+    } finally {
+      setIsAddingTrack(false);
+    }
+  };
+
   return (
     <section style={cardStyle}>
       <h3>Criar Sessão Colaborativa</h3>
@@ -226,6 +285,42 @@ export function CreateCollaborativeSession() {
           </ul>
         </div>
       )}
+
+      <div style={{ marginTop: 16 }}>
+        <h4>Adicionar Música:</h4>
+        <input
+          type="text"
+          placeholder="URL da Música do Spotify"
+          value={trackUrl}
+          onChange={(e) => setTrackUrl(e.target.value)}
+          style={{
+            padding: '2px 6px',
+            width: 'calc(100% - 140px)',
+            fontSize: 15,
+            borderRadius: 4,
+            border: '1px solid #444',
+            background: '#222',
+            color: '#fff',
+            boxSizing: 'border-box',
+            minWidth: 0,
+            marginRight: 8
+          }}
+        />
+        <button
+          onClick={addTrackToPlaylist}
+          disabled={isAddingTrack || !playlistId}
+          style={{
+            padding: '2px 10px',
+            background: '#1DB954',
+            color: 'white',
+            border: 'none',
+            borderRadius: 4,
+            fontSize: 15,
+          }}
+        >
+          {isAddingTrack ? 'Adicionando...' : 'Adicionar Música'}
+        </button>
+      </div>
     </section>
   );
 }
