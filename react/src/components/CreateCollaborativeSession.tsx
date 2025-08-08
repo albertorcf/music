@@ -161,7 +161,7 @@ export function CreateCollaborativeSession() {
         </div>
       )}
 
-      <div style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 8 }}>
         <input
           type="text"
           placeholder="ID ou URL da Playlist"
@@ -184,7 +184,7 @@ export function CreateCollaborativeSession() {
           onClick={fetchPlaylistTracks}
           disabled={isLoadingTracks}
           style={{
-            padding: '4px 10px',
+            padding: '2px 10px',
             background: '#1DB954',
             color: 'white',
             border: 'none',
@@ -197,8 +197,8 @@ export function CreateCollaborativeSession() {
       </div>
 
       {tracks.length > 0 && (
-        <div style={{ marginTop: 20 }}>
-          <h4>Músicas na Playlist:</h4>
+        <div style={{ marginTop: 0 }}>
+          <h4 style={{ marginTop: 8 }}>Músicas na Playlist:</h4>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {tracks.map((item, index) => (
               <li key={index} style={{ marginBottom: 4 }}>
